@@ -39,7 +39,7 @@ public class Particle {
         for (GravitySource g : gs) {
             applyGravity(g);
         }
-        applyDamping();
+//        applyDamping();
         applyPerlinEngine();
         step();
     }
@@ -52,7 +52,8 @@ public class Particle {
     }
 
     private void applyPerlinEngine() {
-        PVector perlin = v.copy().normalize().rotate(PApplet.PI / 2).mult(perlinStrength * (sk.noise(seed, sk.t) - 0.5f));
+        float noise = sk.noise(pos.mag(), pos.heading(), sk.t) - 0.5f;
+        PVector perlin = v.copy().normalize().rotate(PApplet.PI / 2).mult(perlinStrength * noise);
         a.add(perlin);
     }
 
