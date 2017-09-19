@@ -1,18 +1,21 @@
 import processing.core.PApplet;
 import processing.core.PVector;
+import processing.event.KeyEvent;
 
 import java.util.ArrayList;
 
 public class Sketch extends PApplet {
 
     final static int NUM_PARTICLES = 100;
-    final static float G_CONSTANT = 0.1f;
+    final static float G_CONSTANT = 0.05f;
 
     public float t = 0;
     private Particle[] particles;
     private ArrayList<GravitySource> gs;
     private GravitySource mouseG;
     private GravitySource pMouseG;
+
+    public boolean swim = false;
 
     public void settings() {
         size(800, 800);
@@ -47,12 +50,19 @@ public class Sketch extends PApplet {
         t += 0.01;
     }
 
+    public void keyPressed(KeyEvent event) {
+        if (event.getKey() == 's') {
+            swim = !swim;
+            println("swim");
+        }
+    }
+
     private void createParticles() {
         particles = new Particle[NUM_PARTICLES];
         for (int i = 0; i < NUM_PARTICLES; i += 1) {
             particles[i] = new Particle(
                     i, this, PVector.random2D().mult(random(width / 3)), PVector.random2D().mult(2),
-                    random(20, 30), color(255));
+                    random(20, 30), color(180));
             particles[i].gs = gs;
             particles[i].swarm = particles;
         }
@@ -61,8 +71,8 @@ public class Sketch extends PApplet {
     private void mouseGravitySource() {
         if (mousePressed) {
             if (mouseG == null) {
-                mouseG = new GravitySource(new PVector(mouseX - width / 2, mouseY - height / 2), 150, 10);
-                pMouseG = new GravitySource(new PVector(pmouseX - width / 2, pmouseY - height / 2), 100, 10);
+                mouseG = new GravitySource(new PVector(mouseX - width / 2, mouseY - height / 2), 75, 10);
+                pMouseG = new GravitySource(new PVector(pmouseX - width / 2, pmouseY - height / 2), 50, 10);
                 gs.add(mouseG);
                 gs.add(pMouseG);
             } else {

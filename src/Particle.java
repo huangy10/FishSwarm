@@ -69,9 +69,10 @@ public class Particle {
         for (GravitySource g : gs) {
             applyGravity(g);
         }
-//        applyDamping();
+        applyDamping();
         applyResistance();
         applyPerlinEngine();
+        swim();
         step();
     }
 
@@ -105,6 +106,12 @@ public class Particle {
         }
     }
 
+    private void swim() {
+        if (sk.swim) {
+            a.add(v.normalize().mult(2f));
+        }
+    }
+
     private void step() {
         v.add(a).limit(maxSpeed);
         pos.add(v);
@@ -116,10 +123,8 @@ public class Particle {
 
     void display() {
         if (dead) return;
-//        sk.stroke(color);
-//        sk.point(pos.x, pos.y);
         if (trace.isEmpty()) return;
-        sk.stroke(color);
+        sk.stroke(sk.lerpColor(sk.color(50), color, v.mag() / maxSpeed));
         sk.strokeWeight(size);
         PVector pre = trace.get(0);
         if (trace.size() == 1) {
