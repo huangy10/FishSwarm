@@ -11,12 +11,15 @@ public class Particle {
     float   perlinStrength;
     float   maxSpeed;
     int     color;
+    int     idx;
+    Particle[]  swarm;
 
     Sketch sk;
 
     ArrayList<GravitySource> gs;
 
-    Particle(Sketch sketch, PVector pos, PVector v, float mass, int color) {
+    Particle(int idx, Sketch sketch, PVector pos, PVector v, float mass, int color) {
+        this.idx = idx;
         this.sk = sketch;
         this.pos = pos;
         this.v = v;
@@ -39,7 +42,8 @@ public class Particle {
         for (GravitySource g : gs) {
             applyGravity(g);
         }
-//        applyDamping();
+        applyDamping();
+        applyResistance();
         applyPerlinEngine();
         step();
     }
@@ -58,8 +62,18 @@ public class Particle {
     }
 
     private void applyDamping() {
-        PVector damp = v.copy().mult(-0.03f);
+        PVector damp = v.copy().mult(-0.1f);
         a.add(damp);
+    }
+
+    private void applyResistance() {
+        for (Particle p : swarm) {
+            if (p.idx == idx) continue;
+            PVector d = pos.copy().sub(p.pos);
+            float distance = d.mag();
+            PVector resist = d.normalize().mult(p.mass * mass * Sketch.G_CONSTANT / (distance * distance * 10));
+            a.add(resist);
+        }
     }
 
     private void step() {
@@ -72,7 +86,10 @@ public class Particle {
     }
 
     void display() {
-        sk.stroke(color);
-        sk.point(pos.x, pos.y);
+//        sk.stroke(color);
+//        sk.point(pos.x, pos.y);
+        sk.fill(color);
+        sk.noStroke();
+        sk.ellipse(pos.x, pos.y, 3, 3);
     }
 }
