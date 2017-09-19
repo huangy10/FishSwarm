@@ -28,7 +28,7 @@ public class Sketch extends PApplet {
         translate(width / 2, height / 2);
         if (mousePressed) {
             if (mouseG == null) {
-                mouseG = new GravitySource(new PVector(mouseX - width / 2, mouseY - height / 2), 100);
+                mouseG = new GravitySource(new PVector(mouseX - width / 2, mouseY - height / 2), 100, 30);
                 gs.add(mouseG);
             } else {
                 if (gs.isEmpty()) gs.add(mouseG);
@@ -45,8 +45,9 @@ public class Sketch extends PApplet {
         }
 
         if (mouseG != null) {
-            fill(color(255, 0, 0 ));
-            ellipse(mouseG.center.x, mouseG.center.y, 10, 10);
+            stroke(color(255, 0, 0 ));
+            noFill();
+            ellipse(mouseG.center.x, mouseG.center.y, mouseG.range, mouseG.range);
         }
 
         t += 0.01;

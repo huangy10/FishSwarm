@@ -25,7 +25,7 @@ public class Particle {
         this.a = new PVector();
 
         maxSpeed = 10;
-        perlinStrength = 5f;
+        perlinStrength = 2f;
         seed = sk.random(1000);
     }
 
@@ -46,13 +46,14 @@ public class Particle {
 
     private void applyGravity(GravitySource g) {
         float d = pos.dist(g.center);
-//        PVector gForce = g.center.copy().sub(pos).mult(Sketch.G_CONSTANT * g.mass * mass / (d * d));
-        PVector gForce = g.center.copy().sub(pos).mult(Sketch.G_CONSTANT * Sketch.sqrt(g.mass * mass) / d);
+        if (d < g.range) return;
+        PVector gForce = g.center.copy().sub(pos).mult(Sketch.G_CONSTANT * g.mass * mass / (d * d));
+//        PVector gForce = g.center.copy().sub(pos).mult(Sketch.G_CONSTANT * Sketch.sqrt(g.mass * mass) / d);
         a.add(gForce);
     }
 
     private void applyPerlinEngine() {
-        float dir = PConstants.PI * 2 * sk.noise(seed, sk.t);
+        float dir = PConstants.PI * 4.12341212f * sk.noise(seed, sk.t);
         PVector force = PVector.fromAngle(dir).mult(perlinStrength);
         a.add(force);
     }
