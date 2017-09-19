@@ -26,15 +26,7 @@ public class Sketch extends PApplet {
     public void draw() {
         background(0);
         translate(width / 2, height / 2);
-        if (mousePressed) {
-            if (mouseG == null) {
-                mouseG = new GravitySource(new PVector(mouseX - width / 2, mouseY - height / 2), 100, 30);
-                gs.add(mouseG);
-            } else {
-                if (gs.isEmpty()) gs.add(mouseG);
-                mouseG.move(mouseX - width / 2, mouseY - height / 2);
-            }
-        }
+        mouseGravitySource();
 
         for(int i = 0; i < NUM_PARTICLES; i += 1) {
             particles[i].update();
@@ -44,7 +36,7 @@ public class Sketch extends PApplet {
             particles[i].display();
         }
 
-        if (mouseG != null) {
+        if (mouseG != null && !gs.isEmpty()) {
             stroke(color(255, 0, 0 ));
             noFill();
             ellipse(mouseG.center.x, mouseG.center.y, mouseG.range, mouseG.range);
@@ -58,8 +50,22 @@ public class Sketch extends PApplet {
         for (int i = 0; i < NUM_PARTICLES; i += 1) {
             particles[i] = new Particle(
                     this, PVector.random2D().mult(random(width / 3)), PVector.random2D().mult(5),
-                    30, color(255));
+                    random(20, 30), color(255));
             particles[i].gs = gs;
+        }
+    }
+
+    private void mouseGravitySource() {
+        if (mousePressed) {
+            if (mouseG == null) {
+                mouseG = new GravitySource(new PVector(mouseX - width / 2, mouseY - height / 2), 100, 30);
+                gs.add(mouseG);
+            } else {
+                if (gs.isEmpty()) gs.add(mouseG);
+                mouseG.move(mouseX - width / 2, mouseY - height / 2);
+            }
+        } else if (!gs.isEmpty()) {
+            gs.clear();
         }
     }
 }

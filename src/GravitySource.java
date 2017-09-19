@@ -12,9 +12,6 @@ public class GravitySource {
     }
 
     public void move(float x, float y) {
-//        PVector t = new PVector(x, y);
-//        PVector d = t.sub(center);
-//        center.add(d.limit(3));
         center.x = x;
         center.y = y;
     }

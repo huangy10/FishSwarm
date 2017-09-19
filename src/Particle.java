@@ -25,11 +25,11 @@ public class Particle {
         this.a = new PVector();
 
         maxSpeed = 10;
-        perlinStrength = 2f;
+        perlinStrength = 3f;
         seed = sk.random(1000);
     }
 
-    public void update() {
+    void update() {
         if (boundaryCheck()) {
             pos.x = sk.random(sk.width) - sk.width / 2;
             pos.y = sk.random(sk.height) - sk.height / 2;
@@ -48,18 +48,16 @@ public class Particle {
         float d = pos.dist(g.center);
         if (d < g.range) return;
         PVector gForce = g.center.copy().sub(pos).mult(Sketch.G_CONSTANT * g.mass * mass / (d * d));
-//        PVector gForce = g.center.copy().sub(pos).mult(Sketch.G_CONSTANT * Sketch.sqrt(g.mass * mass) / d);
         a.add(gForce);
     }
 
     private void applyPerlinEngine() {
-        float dir = PConstants.PI * 4.12341212f * sk.noise(seed, sk.t);
-        PVector force = PVector.fromAngle(dir).mult(perlinStrength);
-        a.add(force);
+        PVector perlin = v.copy().normalize().rotate(PApplet.PI / 2).mult(perlinStrength * (sk.noise(seed, sk.t) - 0.5f));
+        a.add(perlin);
     }
 
     private void applyDamping() {
-        PVector damp = v.mult(-0.03f);
+        PVector damp = v.copy().mult(-0.03f);
         a.add(damp);
     }
 
@@ -72,7 +70,7 @@ public class Particle {
         return pos.x < -sk.width / 2 || pos.x > sk.width / 2 || pos.y < -sk.height / 2 || pos.y > sk.height / 2;
     }
 
-    public void display() {
+    void display() {
         sk.stroke(color);
         sk.point(pos.x, pos.y);
     }
