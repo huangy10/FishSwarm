@@ -2,7 +2,6 @@ import processing.core.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class Particle {
     PVector pos;
@@ -81,7 +80,8 @@ public class Particle {
     private void applyGravity(GravitySource g) {
         float d = pos.dist(g.center);
         if (d < g.range) return;
-        PVector gForce = g.center.copy().sub(pos).mult(Sketch.G_CONSTANT * g.mass * mass / (d * d));
+        PVector gForce = g.center.copy().sub(pos)
+                .mult(Sketch.G_CONSTANT * g.mass * mass / (d * d));
         a.add(gForce);
     }
 

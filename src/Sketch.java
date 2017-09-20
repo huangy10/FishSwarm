@@ -12,8 +12,8 @@ public class Sketch extends PApplet {
     public float t = 0;
     private Particle[] particles;
     private ArrayList<GravitySource> gs;
-    private GravitySource mouseG;
-    private GravitySource pMouseG;
+    private StaticGravitySource mouseG;
+    private StaticGravitySource pMouseG;
 
     public boolean swim = false;
 
@@ -71,8 +71,8 @@ public class Sketch extends PApplet {
     private void mouseGravitySource() {
         if (mousePressed) {
             if (mouseG == null) {
-                mouseG = new GravitySource(new PVector(mouseX - width / 2, mouseY - height / 2), 75, 10);
-                pMouseG = new GravitySource(new PVector(pmouseX - width / 2, pmouseY - height / 2), 50, 10);
+                mouseG = new StaticGravitySource(new PVector(mouseX - width / 2, mouseY - height / 2), 75, 10);
+                pMouseG = new StaticGravitySource(new PVector(pmouseX - width / 2, pmouseY - height / 2), 50, 10);
                 gs.add(mouseG);
                 gs.add(pMouseG);
             } else {

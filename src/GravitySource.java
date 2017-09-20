@@ -1,6 +1,6 @@
 import processing.core.PVector;
 
-public class GravitySource {
+abstract class GravitySource {
     PVector center;
     float mass;
     float range;
@@ -9,10 +9,5 @@ public class GravitySource {
         this.center = center;
         this.mass = mass;
         this.range = range;
-    }
-
-    public void move(float x, float y) {
-        center.x = x;
-        center.y = y;
     }
 }
