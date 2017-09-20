@@ -9,13 +9,15 @@ public class Sketch extends PApplet {
     final static int NUM_PARTICLES = 100;
     final static float G_CONSTANT = 0.05f;
 
-    public float t = 0;
+    float t = 0;
     private Particle[] particles;
     private ArrayList<GravitySource> gs;
     private StaticGravitySource mouseG;
     private StaticGravitySource pMouseG;
 
-    public boolean swim = false;
+    boolean swim = false;
+    float   halfWidth;
+    float   halfHeight;
 
     public void settings() {
         size(800, 800);
@@ -23,6 +25,8 @@ public class Sketch extends PApplet {
 
     public void setup() {
         frameRate(30);
+        halfWidth = width / 2;
+        halfHeight = height / 2;
         gs = new ArrayList<>();
         createParticles();
     }
@@ -46,8 +50,8 @@ public class Sketch extends PApplet {
             ellipse(mouseG.center.x, mouseG.center.y, mouseG.range, mouseG.range);
             ellipse(pMouseG.center.x, pMouseG.center.y, pMouseG.range, pMouseG.range);
         }
-
         t += 0.01;
+        frame.setTitle("Framerate: " + frameRate);
     }
 
     public void keyPressed(KeyEvent event) {

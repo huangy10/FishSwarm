@@ -18,9 +18,13 @@ public class Particle {
     float   size;
     boolean dead = false;
 
-    private static final int TRACE_SIZE = 5;
-    private static final float DAMPING = 0.05f;
-    private static final float RESIST_STRENGTH = 0.1f;
+    private static final int    TRACE_SIZE = 5;
+    private static final float  DAMPING = 0.05f;
+    private static final float  RESIST_STRENGTH = 0.5f;
+    private static final float  BOUND_AVOID_RANGE = 80;
+    private static final float  BOUND_AVOID_STRENGTH = 1f;
+    private static final float  PERLIN_STRENGTH = 1.5f;
+    private static final float  EXTRA_BOUNDARY = 100f;
 
     LinkedList<PVector> trace;
     Particle[]  swarm;
@@ -38,10 +42,10 @@ public class Particle {
         this.stopColor = stopColor;
         this.a = new PVector();
 
-        maxSpeed = sk.random(10, 13);
+        maxSpeed = sk.random(5, 13);
         size = 5;
         resistRange = size * 2;
-        perlinStrength = 1f;
+        perlinStrength = PERLIN_STRENGTH;
         seed = sk.random(1000);
 
         trace = new LinkedList<>();
@@ -73,6 +77,7 @@ public class Particle {
         applyDamping();
         applyResistance();
         applyPerlinEngine();
+        applyBoundaryAvoid();
         swim();
         step();
     }
@@ -108,9 +113,23 @@ public class Particle {
         }
     }
 
+    private void applyBoundaryAvoid() {
+        if ( pos.x + sk.halfWidth < BOUND_AVOID_RANGE ) {
+            a.add(new PVector(BOUND_AVOID_STRENGTH, 0));
+        } else if (pos.x + BOUND_AVOID_RANGE > sk.halfWidth) {
+            a.add(new PVector(-BOUND_AVOID_STRENGTH, 0));
+        }
+
+        if ( pos.y + sk.halfHeight < BOUND_AVOID_RANGE ) {
+            a.add(new PVector(0, BOUND_AVOID_STRENGTH));
+        } else if ( pos.y + BOUND_AVOID_RANGE > sk.halfHeight) {
+            a.add(new PVector(0, -BOUND_AVOID_STRENGTH));
+        }
+    }
+
     private void swim() {
         if (sk.swim) {
-            a.add(v.normalize().mult(2f));
+            a.add(v.copy().normalize().mult(0.2f));
         }
     }
 
@@ -120,7 +139,10 @@ public class Particle {
     }
 
     private boolean boundaryCheck() {
-        return pos.x < -sk.width / 2 || pos.x > sk.width / 2 || pos.y < -sk.height / 2 || pos.y > sk.height / 2;
+        return pos.x < -sk.halfWidth - EXTRA_BOUNDARY ||
+                pos.x > sk.halfWidth + EXTRA_BOUNDARY ||
+                pos.y < -sk.halfHeight - EXTRA_BOUNDARY ||
+                pos.y > sk.halfHeight + EXTRA_BOUNDARY;
     }
 
     void display() {
