@@ -13,6 +13,7 @@ public class Particle {
     float   perlinStrength;
     float   maxSpeed;
     int     color;
+    int     stopColor;
     int     idx;
     float   resistRange;
     float   size;
@@ -28,13 +29,14 @@ public class Particle {
 
     ArrayList<GravitySource> gs;
 
-    Particle(int idx, Sketch sketch, PVector pos, PVector v, float mass, int color) {
+    Particle(int idx, Sketch sketch, PVector pos, PVector v, float mass, int color, int stopColor) {
         this.idx = idx;
         this.sk = sketch;
         this.pos = pos;
         this.v = v;
         this.mass = mass;
         this.color = color;
+        this.stopColor = stopColor;
         this.a = new PVector();
 
         maxSpeed = sk.random(10, 13);
@@ -124,7 +126,7 @@ public class Particle {
     void display() {
         if (dead) return;
         if (trace.isEmpty()) return;
-        sk.stroke(sk.lerpColor(sk.color(50), color, v.mag() / maxSpeed));
+        sk.stroke(sk.lerpColor(stopColor, color, v.mag() / maxSpeed));
         sk.strokeWeight(size);
         PVector pre = trace.get(0);
         if (trace.size() == 1) {

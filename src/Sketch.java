@@ -28,7 +28,7 @@ public class Sketch extends PApplet {
     }
 
     public void draw() {
-        background(0);
+        background(255);
         translate(width / 2, height / 2);
         mouseGravitySource();
 
@@ -62,7 +62,7 @@ public class Sketch extends PApplet {
         for (int i = 0; i < NUM_PARTICLES; i += 1) {
             particles[i] = new Particle(
                     i, this, PVector.random2D().mult(random(width / 3)), PVector.random2D().mult(2),
-                    random(20, 30), color(180));
+                    random(20, 30), color(30), color(200));
             particles[i].gs = gs;
             particles[i].swarm = particles;
         }
