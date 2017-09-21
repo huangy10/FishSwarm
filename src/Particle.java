@@ -3,11 +3,10 @@ import processing.core.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class Particle {
+public class Particle extends GravitySource {
     PVector pos;
     PVector v;
     PVector a;
-    float   mass;
     float   seed;
     float   perlinStrength;
     float   maxSpeed;
@@ -17,6 +16,7 @@ public class Particle {
     float   resistRange;
     float   size;
     boolean dead = false;
+    boolean asGravitySource = false;
 
     private static final int    TRACE_SIZE = 5;
     private static final float  DAMPING = 0.05f;
@@ -33,11 +33,14 @@ public class Particle {
     ArrayList<GravitySource> gs;
 
     Particle(int idx, Sketch sketch, PVector pos, PVector v, float mass, int color, int stopColor) {
+        super(pos, mass, 100);
+
         this.idx = idx;
         this.sk = sketch;
         this.pos = pos;
         this.v = v;
         this.mass = mass;
+        this.pmass = mass;
         this.color = color;
         this.stopColor = stopColor;
         this.a = new PVector();
@@ -57,7 +60,6 @@ public class Particle {
             pos.x = sk.random(sk.width) - sk.width / 2;
             pos.y = sk.random(sk.height) - sk.height / 2;
             trace.clear();
-//            dead = true;
             return;
         }
         if (trace.size() >= TRACE_SIZE) {
@@ -75,14 +77,16 @@ public class Particle {
             applyGravity(g);
         }
         applyDamping();
-        applyResistance();
+//        applyResistance();
         applyPerlinEngine();
         applyBoundaryAvoid();
         swim();
+        pulse();
         step();
     }
 
     private void applyGravity(GravitySource g) {
+        if (asGravitySource && g.type != 0) return;
         float d = pos.dist(g.center);
         if (d < g.range) return;
         PVector gForce = g.center.copy().sub(pos)
@@ -129,7 +133,31 @@ public class Particle {
 
     private void swim() {
         if (sk.swim) {
-            a.add(v.copy().normalize().mult(0.2f));
+            a.add(v.copy().normalize().mult(getSwimForce()));
+        }
+    }
+
+    private float getSwimForce() {
+        if (counter == 0)
+            return asGravitySource ? 0.4f * sk.noise(seed, sk.t) : 0.2f;
+        else {
+            return 0.6f;
+        }
+    }
+
+    private int counter = 0;
+    private float pmass = 0;
+
+    private void pulse() {
+        if (!asGravitySource) return;
+        if (counter > 0) {
+            mass = 2 * pmass;
+            counter -= 1;
+        } else {
+            mass = pmass;
+            if (sk.random(1) < 0.01) {
+                counter = 30;
+            }
         }
     }
 
@@ -162,5 +190,10 @@ public class Particle {
                 pre = p;
             }
         }
+    }
+
+    void setMass(float mass) {
+        this.mass = mass;
+        this.pmass = mass;
     }
 }

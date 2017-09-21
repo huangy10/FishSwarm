@@ -14,6 +14,7 @@ public class Sketch extends PApplet {
     private ArrayList<GravitySource> gs;
     private StaticGravitySource mouseG;
     private StaticGravitySource pMouseG;
+    private ArrayList<GravitySource>    leaders;
 
     boolean swim = false;
     float   halfWidth;
@@ -28,7 +29,10 @@ public class Sketch extends PApplet {
         halfWidth = width / 2;
         halfHeight = height / 2;
         gs = new ArrayList<>();
+        leaders = new ArrayList<>();
         createParticles();
+
+        noiseSeed(second());
     }
 
     public void draw() {
@@ -44,14 +48,14 @@ public class Sketch extends PApplet {
             particles[i].display();
         }
 
-        if (mouseG != null && !gs.isEmpty()) {
+        if (mousePressed && mouseG != null && !gs.isEmpty()) {
             stroke(color(255, 0, 0 ));
             strokeWeight(1);
             ellipse(mouseG.center.x, mouseG.center.y, mouseG.range, mouseG.range);
             ellipse(pMouseG.center.x, pMouseG.center.y, pMouseG.range, pMouseG.range);
         }
         t += 0.01;
-        frame.setTitle("Framerate: " + frameRate);
+        surface.setTitle("Framerate: " + frameRate);
     }
 
     public void keyPressed(KeyEvent event) {
@@ -70,6 +74,19 @@ public class Sketch extends PApplet {
             particles[i].gs = gs;
             particles[i].swarm = particles;
         }
+        convertParticleToLeader(particles[NUM_PARTICLES - 1]);
+        convertParticleToLeader(particles[NUM_PARTICLES - 2]);
+        convertParticleToLeader(particles[NUM_PARTICLES - 3]);
+    }
+
+    private void convertParticleToLeader(Particle leader) {
+        leader.asGravitySource = true;
+        leader.color = color(255, 0, 0);
+        leader.stopColor = color(100, 0, 0);
+        leader.setMass(20f);
+        leader.range = 50;
+        leader.type  = 1;
+        leaders.add(leader);
     }
 
     private void mouseGravitySource() {
@@ -80,7 +97,7 @@ public class Sketch extends PApplet {
                 gs.add(mouseG);
                 gs.add(pMouseG);
             } else {
-                if (gs.isEmpty()) {
+                if (gs.size() <= leaders.size()) {
                     gs.add(mouseG);
                     gs.add(pMouseG);
                 }
@@ -91,8 +108,11 @@ public class Sketch extends PApplet {
                     pMouseG.move(old.x, old.y);
                 }
             }
-        } else if (!gs.isEmpty()) {
+        } else if (gs.size() > leaders.size()) {
             gs.clear();
+            gs.addAll(leaders);
+        } else if (gs.isEmpty()) {
+            gs.addAll(leaders);
         }
     }
 }
