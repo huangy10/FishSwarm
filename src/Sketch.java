@@ -16,16 +16,18 @@ public class Sketch extends PApplet {
     private StaticGravitySource pMouseG;
     private ArrayList<GravitySource>    leaders;
 
-    boolean swim = false;
+    boolean swim = true;
     float   halfWidth;
     float   halfHeight;
 
     public void settings() {
-        size(800, 800);
+//        size(1280, 720);
+        fullScreen();
     }
 
     public void setup() {
         frameRate(30);
+        noCursor();
         halfWidth = width / 2;
         halfHeight = height / 2;
         gs = new ArrayList<>();
@@ -37,6 +39,7 @@ public class Sketch extends PApplet {
 
     public void draw() {
         background(255);
+        noCursor();
         translate(width / 2, height / 2);
         mouseGravitySource();
 
@@ -48,12 +51,12 @@ public class Sketch extends PApplet {
             particles[i].display();
         }
 
-        if (mousePressed && mouseG != null && !gs.isEmpty()) {
-            stroke(color(255, 0, 0 ));
-            strokeWeight(1);
-            ellipse(mouseG.center.x, mouseG.center.y, mouseG.range, mouseG.range);
-            ellipse(pMouseG.center.x, pMouseG.center.y, pMouseG.range, pMouseG.range);
-        }
+//        if (mousePressed && mouseG != null && !gs.isEmpty()) {
+//            stroke(color(255, 0, 0 ));
+//            strokeWeight(1);
+//            ellipse(mouseG.center.x, mouseG.center.y, mouseG.range, mouseG.range);
+//            ellipse(pMouseG.center.x, pMouseG.center.y, pMouseG.range, pMouseG.range);
+//        }
         t += 0.01;
         surface.setTitle("Framerate: " + frameRate);
     }
